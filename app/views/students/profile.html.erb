@@ -1,0 +1,89 @@
+<!-- filepath: /Users/alyantharani/Desktop/Academics/CSCE-431/cleo-asp-501/app/views/students/profile.html.erb -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <% content_for :title, "Profile" %>
+  <%= csrf_meta_tags %>
+</head>
+
+<body class="profile-body">
+  <%= render 'shared/navbar_student' %>
+
+  <!-- Profile Content -->
+  <div class="profile-container">
+    <h1 class="profile-header-text">Student Profile</h1>
+
+    <p class="profile-info"><strong>Name:</strong> <%= "#{@student.first_name} #{@student.last_name}" %></p>
+    <p class="profile-info"><strong>Email:</strong> <%= @student.email %></p>
+    <p class="profile-info"><strong>Enrollment Year:</strong> <%= @student.enrol_year %></p>
+    <p class="profile-info"><strong>Graduation Year:</strong> <%= @student.grad_year %></p>
+    <p class="profile-info"><strong>Enrollment Semester:</strong> <%= @student.enrol_semester.humanize %></p>
+    <p class="profile-info"><strong>Graduation Semester:</strong> <%= @student.grad_semester.humanize %></p>
+    <p class="profile-info"><strong>Major:</strong> <%= @student.major.mname if @student.major %></p> 
+    <p class="profile-info"><strong>Emphasis:</strong> <%= @student.emphasis.ename if @student.emphasis %></p>
+    <p class="profile-info"><strong>Preferred Time:</strong> <%= @student.student_info&.preferred_time.presence%></p>
+    <p class="profile-info"><strong>Preferred Location:</strong> <%= @student.student_info&.preferred_loc.presence%></p>
+    <p class="profile-info"><strong>FERPA Consent:</strong> <%= @student.student_info&.ferpa_consent ? 'Consent Given' : 'No Consent' %></p>
+
+
+
+    <!-- Transcript Section -->
+    <div class="transcript-section mt-4">
+      <h4 class="text-dark font-weight-bolder mb-3">Transcript Management</h4>
+      
+      <div class="d-flex gap-3 mb-4">
+        <!-- Upload/View/Edit Transcript Button -->
+        <%= link_to view_transcript_courses_student_path(current_student_login), 
+            class: "btn btn-primary d-flex align-items-center" do %>
+          <i class="fas fa-edit me-2"></i> Upload/View/Edit Transcript
+        <% end %>
+      </div>
+    </div>
+   
+    <!-- Credits Scale -->
+    <h4 class="text-dark text-left mt-4 font-weight-bolder">Track Your Progress</h4>
+    <div class="text-center">
+      <p class="text-dark font-weight-bold">
+        You are <%= ((@student.total_credits_completed || 0) / 126.0 * 100).round(2) %>% done with your degree.
+      </p>
+    </div>
+    <div class="credits-scale">
+      <div class="credits-scale-labels">
+        <span>0</span>
+        <span>126</span>
+      </div>
+      <div class="credits-scale-bar">
+        <div class="credits-scale-fill" style="width: <%= ((@student.total_credits_completed || 0) / 126.0 * 100).round(2) %>%"></div>
+      </div>
+      <div class="credits-scale-markers">
+        <span>Year 0</span>
+        <span>Year 1</span>
+        <span>Year 2</span>
+        <span>Year 3</span>
+        <span>Year 4</span>
+      </div>
+    </div>
+
+    <%= link_to 'Edit Profile', edit_student_path(@student.google_id), class: 'profile-edit-link' %> 
+  </div>
+
+  <!-- JavaScript for toggling dropdown -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const avatar = document.getElementById('avatar');
+      const dropdownMenu = document.getElementById('dropdown-menu');
+
+      // Toggle dropdown visibility
+      avatar.addEventListener('click', function() {
+        dropdownMenu.classList.toggle('profile-show');
+      });
+
+      // Hide dropdown if clicking outside
+      document.addEventListener('click', function(event) {
+        if (!avatar.contains(event.target) && !dropdownMenu.contains(event.target)) {
+          dropdownMenu.classList.remove('profile-show');
+        }
+      });
+    });
+  </script>
+</body>
